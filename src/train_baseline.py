@@ -6,7 +6,7 @@ from dataset_grid import GridLipReadingDataset, CharVocab
 from model_baseline import LipReadingGRUCTC, NUM_CLASSES, BLANK_IDX
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-BATCH_SIZE = 4
+BATCH_SIZE = 16
 EPOCHS = 5
 LR = 1e-3
 MAX_FRAMES = 40  # to keep things manageable
@@ -48,9 +48,10 @@ def main():
         train_ds,
         batch_size=BATCH_SIZE,
         shuffle=True,
-        num_workers=0,
+        num_workers=2,
         collate_fn=collate_fn,
-    )
+        pin_memory=True if DEVICE.type == "cuda" else False,
+)
 
     model = LipReadingGRUCTC().to(DEVICE)
     criterion = nn.CTCLoss(
