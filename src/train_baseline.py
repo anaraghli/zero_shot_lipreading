@@ -96,7 +96,7 @@ def main():
         torch.save(model.state_dict(), f"checkpoints/baseline_epoch_{epoch}.pt")
         print(f"[INFO] Saved checkpoint for epoch {epoch}")
 
-    print("Training complete.")
+    print("Training complete. Checkpoints saved in ./checkpoints/")
 
 
 if __name__ == "__main__":
