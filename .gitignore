@@ -4,3 +4,4 @@ data/processed/
 *.png
 *.avi
 *.mp4
+checkpoints/
