@@ -322,7 +322,6 @@ The transformer model achieves about an **11% relative reduction in CER** compar
 Some natural extensions of this project:
 
 - Study how the **number of training speakers** affects zero-shot performance.
-- Explore different transformer depths / widths and attention head counts.
 - Try **beam search** decoding instead of greedy CTC.
 - Experiment with different mouth ROI strategies (e.g., larger crops, different resolutions).
 - Add word-level metrics (WER) in addition to CER.
