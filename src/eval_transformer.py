@@ -104,7 +104,14 @@ def parse_args():
         default=20,
         help="Number of example predictions to print",
     )
-    return parser.parse_args()
+    # NEW: model depth + size args (must match training config)
+    parser.add_argument("--d_model", type=int, default=256)
+    parser.add_argument("--nhead", type=int, default=4)
+    parser.add_argument("--num_layers", type=int, default=4)
+    parser.add_argument("--dim_feedforward", type=int, default=512)
+    parser.add_argument("--dropout", type=float, default=0.1)
+
+    return parser.args()
 
 
 def main():
@@ -125,7 +132,17 @@ def main():
     )
 
     print(f"[INFO] Loading transformer checkpoint from {args.ckpt}")
-    model = LipReadingTransformerCTC().to(DEVICE)
+
+    # IMPORTANT: construct model with SAME hyperparameters as during training
+    model = LipReadingTransformerCTC(
+        cnn_out_dim=args.d_model,
+        d_model=args.d_model,
+        nhead=args.nhead,
+        num_layers=args.num_layers,
+        dim_feedforward=args.dim_feedforward,
+        dropout=args.dropout,
+    ).to(DEVICE)
+
     state_dict = torch.load(args.ckpt, map_location=DEVICE)
     model.load_state_dict(state_dict)
     model.eval()
