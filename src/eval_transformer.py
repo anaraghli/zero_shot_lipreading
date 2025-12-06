@@ -104,14 +104,14 @@ def parse_args():
         default=20,
         help="Number of example predictions to print",
     )
-    # NEW: model depth + size args (must match training config)
+    # model hyperparams – must match training config
     parser.add_argument("--d_model", type=int, default=256)
     parser.add_argument("--nhead", type=int, default=4)
     parser.add_argument("--num_layers", type=int, default=4)
     parser.add_argument("--dim_feedforward", type=int, default=512)
     parser.add_argument("--dropout", type=float, default=0.1)
 
-    return parser.args()
+    return parser.parse_args()
 
 
 def main():
