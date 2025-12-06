@@ -2,32 +2,50 @@
 
 ## Setup
 
-- Dataset: GRID Corpus
-- Speakers:
-  - Train: s1–s6
-  - Test (zero-shot speakers): s7–s8
-- Input: 64×64 mouth crops (Mediapipe FaceMesh ROI)
+- Dataset: GRID corpus
+- Train speakers: **s1–s6**
+- Test speakers (zero-shot): **s7–s8**
+- Input: 64×64 mouth crops (MediaPipe FaceMesh ROI)
 - Max frames per clip: 40
-- Loss: CTC, char-level
-- Evaluation: greedy CTC decoding, character error rate (CER)
+- Loss: CTC, character-level
+- Evaluation: greedy CTC decoding, Character Error Rate (CER)
 
-## Models
+---
 
-### 1. Baseline – CNN + BiGRU + CTC
+## Baseline vs Transformer (4-layer)
 
-- Frame encoder: 4-layer CNN
-- Temporal encoder: 2-layer BiGRU (hidden size 256)
-- Output: char-level logits + CTC
+| Model                      | Test CER (s7–s8) |
+|---------------------------|------------------|
+| CNN–BiGRU baseline        | 0.513            |
+| Transformer, 4 layers     | 0.466            |
 
-**Test CER (s7–s8, epoch 5):** `0.513`
+- Absolute improvement: 0.513 → 0.466 (Δ = 0.047)
+- Relative CER reduction: ≈ **9%**
 
-### 2. Transformer – CNN + Transformer Encoder + CTC
+The 4-layer Transformer encoder improves zero-shot performance on unseen speakers compared to the CNN–BiGRU baseline.
 
-- Frame encoder: same CNN as baseline
-- Temporal encoder: 4-layer Transformer encoder (d_model=256, nhead=4)
-- Output: char-level logits + CTC
+---
 
-**Test CER (s7–s8, epoch 5):** `0.455`
+## Effect of Transformer Depth on Zero-shot CER
 
-- Absolute improvement: ~**5.8** percentage points
-- Relative CER reduction: ~**11%**
+All transformer models share the same CNN front-end and are trained for 5 epochs
+on speakers s1–s6 (zero-shot evaluation on s7–s8).
+
+| Model                         | Test CER (s7–s8) |
+|------------------------------|------------------|
+| CNN–BiGRU baseline           | 0.513            |
+| Transformer, 2 layers        | 0.530            |
+| Transformer, 4 layers        | 0.466            |
+| Transformer, 6 layers        | 0.529            |
+
+### Observations
+
+- A **4-layer** transformer encoder improves zero-shot performance compared to the
+  CNN–BiGRU baseline, reducing CER from 0.513 to 0.466 (≈9% relative CER reduction).
+- A **2-layer** transformer underperforms both the baseline and the 4-layer model
+  (CER 0.530), suggesting that too shallow an encoder cannot fully capture the temporal
+  dynamics of lip motion.
+- Increasing depth further to **6 layers** does **not** improve performance (CER 0.529),
+  and in this configuration performs similarly or worse than the baseline. This hints at
+  diminishing returns and possible overfitting given the limited number of training
+  speakers and epochs.
